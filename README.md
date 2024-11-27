@@ -2,6 +2,7 @@
 
 
 #Project Structure
+
 TechAid/
 ├── frontend/       # React Native app code
 │   ├── src/
