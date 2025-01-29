@@ -10,9 +10,12 @@ import SwiftData
 
 @main
 struct TechAidApp: App {
+    @StateObject private var authManager = AuthenticationManager()
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            User.self,
+            Course.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -25,8 +28,13 @@ struct TechAidApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if authManager.isAuthenticated {
+                MainTabView()
+            } else {
+                LoginView()
+            }
         }
         .modelContainer(sharedModelContainer)
+        .environmentObject(authManager)
     }
 }
