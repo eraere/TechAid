@@ -9,20 +9,8 @@ import SwiftUI
 import SwiftData
 import FirebaseCore
 
-// New: Define an AppDelegate to configure Firebase
-class AppDelegate: NSObject, UIApplicationDelegate {
-    func application(_ application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        FirebaseApp.configure() // Configure Firebase
-        return true
-    }
-}
-
 @main
 struct TechAidApp: App {
-    // Add the app delegate adaptor
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-
     @StateObject private var authManager = AuthenticationManager()
     
     var sharedModelContainer: ModelContainer = {

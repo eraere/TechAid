@@ -8,7 +8,6 @@ struct LessonDetailView: View {
     @State private var hasCompletedPractice = false
     @Environment(\.dismiss) private var dismiss
     
-    // Sample lesson steps for demonstration
     let steps = [
         LessonStep(
             title: "Introduction",

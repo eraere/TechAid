@@ -16,7 +16,7 @@ class ContentManager {
             "totalHours": course.totalHours,
             "color": course.color,
             "price": course.price as Any,
-            "progress": course.progress  // if you want to store calculated progress
+            "progress": course.progress  /
         ]
         
         db.collection("courses").document(course.id).setData(courseData) { error in
@@ -24,7 +24,7 @@ class ContentManager {
         }
     }
     
-    // Function to fetch all courses.
+    
     func fetchCourses(completion: @escaping (Result<[Course], Error>) -> Void) {
         // For demonstration purposes, simulate a network fetch.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

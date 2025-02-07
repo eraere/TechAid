@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 
-// Uncomment the following if you don't already have AuthenticationManager defined.
+
 // /**
 // class AuthenticationManager: ObservableObject {
 //     @Published var isAuthenticated: Bool = false
@@ -26,13 +26,6 @@ struct HomeView: View {
                         ProgressView("Loading courses...")
                             .padding()
                     } else {
-                        // Uncomment and replace with your course list view if desired.
-                        // List(courses) { course in
-                        //     NavigationLink(destination: CourseDetailView(course: course)) {
-                        //         CourseProgressCard(course: course, onTap: nil)
-                        //     }
-                        // }
-                        // .listStyle(PlainListStyle())
                         Text("Courses loaded")
                             .padding()
                     }

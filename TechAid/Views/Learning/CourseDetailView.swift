@@ -1,10 +1,8 @@
-// TechAid/Views/Learning/CourseDetailView.swift
+
 
 import SwiftUI
 
-// If you do not already have a Course model defined in your project,
-// ensure that it is imported (e.g., via "import TechAid" or by including the file in your target).
-// For testing purposes, you can uncomment the dummy definition below:
+
 /*
 struct Course: Identifiable {
     let id: String

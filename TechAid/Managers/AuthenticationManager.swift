@@ -1,15 +1,15 @@
 import SwiftUI
-import FirebaseAuth      // Ensure FirebaseAuth is added via SPM or CocoaPods
-import FirebaseFirestore // Ensure FirebaseFirestore is added
+import FirebaseAuth
+import FirebaseFirestore
 
-// Do not duplicate the User declaration here if it's defined elsewhere (e.g. in Models/User.swift).
+
 
 class AuthenticationManager: ObservableObject {
     @Published var isAuthenticated: Bool = false
-    var currentUser: User? // Assume that User is defined exactly once in your project
+    var currentUser: User?
 
     init() {
-        // Perform any required startup configuration.
+        
     }
 
     func signIn(email: String, password: String) async throws -> User {
@@ -22,7 +22,7 @@ class AuthenticationManager: ObservableObject {
     }
     
     func signOut() {
-        // Sign out from Firebase Auth as needed:
+      
         do {
             try Auth.auth().signOut()
             isAuthenticated = false
@@ -38,8 +38,7 @@ class AuthenticationManager: ObservableObject {
         currentUser = User(name: "John Doe")
     }
     
-    // Function to register users via Firebase Authentication.
-    // Note: Ensure that the external User type supports this initializer.
+  
     func registerUser(email: String, password: String, fullName: String, completion: @escaping (Result<User, Error>) -> Void) {
         Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
             if let error = error {
