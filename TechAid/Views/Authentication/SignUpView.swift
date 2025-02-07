@@ -1,13 +1,16 @@
 import SwiftUI
 
 struct SignUpView: View {
+    @EnvironmentObject var authManager: AuthenticationManager
     @Binding var selectedTab: Int
-    @State private var fullName = ""
-    @State private var email = ""
-    @State private var password = ""
-    @State private var confirmPassword = ""
-    @State private var showPassword = false
-    @State private var showConfirmPassword = false
+    
+    @State private var fullName: String = ""
+    @State private var email: String = ""
+    @State private var password: String = ""
+    @State private var confirmPassword: String = ""
+    @State private var showingError = false
+    @State private var errorMessage = ""
+    @State private var isLoading = false
     
     var body: some View {
         VStack(spacing: 20) {
@@ -16,7 +19,7 @@ struct SignUpView: View {
                 Image(systemName: "person")
                     .foregroundColor(.white.opacity(0.6))
                 TextField("Full Name", text: $fullName)
-                    .textContentType(.name)
+                    .autocapitalization(.words)
                     .foregroundColor(.white)
             }
             .padding()
@@ -41,19 +44,9 @@ struct SignUpView: View {
             HStack {
                 Image(systemName: "lock")
                     .foregroundColor(.white.opacity(0.6))
-                Group {
-                    if showPassword {
-                        TextField("Password", text: $password)
-                    } else {
-                        SecureField("Password", text: $password)
-                    }
-                }
-                .textContentType(.newPassword)
-                .foregroundColor(.white)
-                Button(action: { showPassword.toggle() }) {
-                    Image(systemName: showPassword ? "eye.slash" : "eye")
-                        .foregroundColor(.white.opacity(0.6))
-                }
+                SecureField("Password", text: $password)
+                    .textContentType(.newPassword)
+                    .foregroundColor(.white)
             }
             .padding()
             .background(.ultraThinMaterial)
@@ -63,77 +56,73 @@ struct SignUpView: View {
             HStack {
                 Image(systemName: "lock")
                     .foregroundColor(.white.opacity(0.6))
-                Group {
-                    if showConfirmPassword {
-                        TextField("Confirm Password", text: $confirmPassword)
-                    } else {
-                        SecureField("Confirm Password", text: $confirmPassword)
-                    }
-                }
-                .textContentType(.newPassword)
-                .foregroundColor(.white)
-                Button(action: { showConfirmPassword.toggle() }) {
-                    Image(systemName: showConfirmPassword ? "eye.slash" : "eye")
-                        .foregroundColor(.white.opacity(0.6))
-                }
+                SecureField("Confirm Password", text: $confirmPassword)
+                    .textContentType(.newPassword)
+                    .foregroundColor(.white)
             }
             .padding()
             .background(.ultraThinMaterial)
             .cornerRadius(15)
             
             // Sign Up Button
-            Button(action: signUp) {
-                ZStack {
-                    LinearGradient(
-                        colors: [Color(hex: "#4A90E2"), Color(hex: "#6B48FF")],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                    .cornerRadius(15)
-                    
-                    Text("Create Account")
+            Button(action: {
+                register()
+            }) {
+                if isLoading {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                } else {
+                    Text("Sign Up")
                         .font(.headline)
                         .foregroundColor(.white)
-                }
-                .frame(height: 55)
-            }
-            
-            // Terms and Conditions
-            VStack(spacing: 8) {
-                Text("By signing up, you agree to our")
-                    .foregroundColor(.white.opacity(0.6))
-                HStack(spacing: 4) {
-                    Button(action: { /* Show Terms */ }) {
-                        Text("Terms of Service")
-                            .underline()
-                    }
-                    Text("and")
-                        .foregroundColor(.white.opacity(0.6))
-                    Button(action: { /* Show Privacy */ }) {
-                        Text("Privacy Policy")
-                            .underline()
-                    }
-                }
-                .font(.footnote)
-                .foregroundColor(.white)
-            }
-            
-            // Already have an account
-            HStack(spacing: 4) {
-                Text("Already have an account?")
-                    .foregroundColor(.white.opacity(0.6))
-                Button(action: { withAnimation { selectedTab = 0 } }) {
-                    Text("Sign In")
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .cornerRadius(10)
                 }
             }
-            .font(.subheadline)
+            .alert("Error", isPresented: $showingError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(errorMessage)
+            }
         }
         .padding(.horizontal, 30)
     }
     
-    private func signUp() {
-        // Implement sign up logic
+    private func register() {
+        // Basic form validation
+        guard !fullName.isEmpty, !email.isEmpty, !password.isEmpty, password == confirmPassword else {
+            errorMessage = "Please fill in all fields and make sure passwords match."
+            showingError = true
+            return
+        }
+        
+        isLoading = true
+        authManager.registerUser(email: email, password: password, fullName: fullName) { result in
+            DispatchQueue.main.async {
+                isLoading = false
+                switch result {
+                case .success(_):
+                    // Registration successful.
+                    // Option: you could reset the tab or navigate elsewhere.
+                    selectedTab = 0
+                case .failure(let error):
+                    errorMessage = error.localizedDescription
+                    showingError = true
+                }
+            }
+        }
+    }
+}
+
+struct SignUpView_Previews: PreviewProvider {
+    static var previews: some View {
+        SignUpView(selectedTab: .constant(1))
+            .environmentObject(AuthenticationManager())
     }
 } 
